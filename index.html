@@ -2,99 +2,78 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>System Freeze</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Initializing Kernel Access...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <style>
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
-      height: 100%;
       background: black;
-      color: red;
+      color: #00FF00;
       font-family: monospace;
-      font-size: 2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      touch-action: none;
-      user-select: none;
-      cursor: none;
-    }
-
-    #freezeText {
-      animation: blink 1s infinite;
-      text-align: center;
+      font-size: 1.2rem;
       padding: 20px;
+      overflow: hidden;
+      user-select: none;
     }
 
-    @keyframes blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.2; }
+    #console {
+      white-space: pre-wrap;
+      word-break: break-word;
+      animation: flicker 0.2s infinite alternate;
+    }
+
+    @keyframes flicker {
+      from { opacity: 1; }
+      to { opacity: 0.95; }
     }
   </style>
 </head>
-<body onclick="startPrank()" ontouchstart="startPrank()">
-  <div id="freezeText">
-    ⚠ SYSTEM UNRESPONSIVE ⚠<br><span id="timer">Please wait...</span>
-  </div>
+<body onclick="startHack()" ontouchstart="startHack()">
+  <div id="console">> Initializing system...</div>
 
-  <audio id="alarm" preload="auto">
-    <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" type="audio/mpeg">
+  <audio id="beep" preload="auto" loop>
+    <source src="https://www.soundjay.com/button/sounds/beep-07.mp3" type="audio/mp3">
   </audio>
 
   <script>
-    function goFullScreen() {
-      const el = document.documentElement;
-      if (el.requestFullscreen) el.requestFullscreen();
-      else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-      else if (el.msRequestFullscreen) el.msRequestFullscreen();
-    }
+    const lines = [
+      "> Connecting to remote host...",
+      "> Host detected: Android 12.3.7",
+      "> Gaining root access...",
+      "> Injecting payload...",
+      "> Disabling system protections...",
+      "> Accessing camera feed...",
+      "> Downloading contacts...",
+      "> Uploading data to server...",
+      "> Locking system...",
+      "> SYSTEM FAILURE ⚠️",
+      "> System will shutdown in 3... 2... 1..."
+    ];
 
-    function blockInputs() {
-      const prevent = (e) => e.preventDefault();
-      document.addEventListener('contextmenu', prevent);
-      document.addEventListener('touchstart', prevent, { passive: false });
-      document.addEventListener('touchmove', prevent, { passive: false });
-      document.addEventListener('keydown', prevent);
-      document.addEventListener('mousedown', prevent);
-      document.addEventListener('scroll', () => window.scrollTo(0, 0));
-    }
+    let index = 0;
+    const consoleDiv = document.getElementById("console");
 
-    function startTimer() {
-      const timerEl = document.getElementById('timer');
-      let secondsLeft = 600;
+    function startHack() {
+      document.body.requestFullscreen?.();
+      blockUser();
+      document.getElementById("beep").play();
       const interval = setInterval(() => {
-        const mins = Math.floor(secondsLeft / 60);
-        const secs = secondsLeft % 60;
-        timerEl.innerText = `System Locked: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
-        secondsLeft--;
-        if (secondsLeft < 0) {
+        if (index < lines.length) {
+          consoleDiv.innerText += `\n${lines[index++]}`;
+        } else {
           clearInterval(interval);
-          timerEl.innerText = "✔ System Recovered.";
+          consoleDiv.innerText += "\n\n[✔ PRANK SUCCESSFUL 😈]";
         }
       }, 1000);
     }
 
-    function blockBackButton() {
+    function blockUser() {
+      document.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
+      document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+      document.addEventListener('keydown', e => e.preventDefault());
+      document.addEventListener('contextmenu', e => e.preventDefault());
+      window.onpopstate = () => history.pushState(null, null, location.href);
       history.pushState(null, null, location.href);
-      window.onpopstate = function () {
-        history.pushState(null, null, location.href);
-      };
-    }
-
-    function startSound() {
-      const audio = document.getElementById('alarm');
-      audio.volume = 1.0; // Full volume
-      audio.play().catch(e => console.log("Playback error: ", e));
-    }
-
-    function startPrank() {
-      goFullScreen();
-      blockInputs();
-      startTimer();
-      blockBackButton();
-      startSound();
     }
   </script>
 </body>
