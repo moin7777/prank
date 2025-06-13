@@ -1,60 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>System Processing...</title>
+  <meta charset="UTF-8" />
+  <title>System Freeze</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <style>
-    body {
-      background-color: black;
-      color: #00FF00;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 20px;
+    html, body {
       margin: 0;
+      padding: 0;
+      height: 100%;
+      background: black;
+      color: red;
+      font-family: monospace;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: none;
+      user-select: none;
       overflow: hidden;
+      touch-action: none;
     }
-    #terminal {
-      white-space: pre-wrap;
-      overflow-y: scroll;
-      height: 100vh;
+
+    #freezeText {
+      animation: blink 1s infinite;
+      text-align: center;
+      padding: 20px;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
     }
   </style>
 </head>
-<body onclick="requestFullScreen()">
-  <div id="terminal"></div>
+<body ontouchstart="goFullScreen()" onclick="goFullScreen()">
+  <div id="freezeText">
+    ⚠ SYSTEM UNRESPONSIVE ⚠<br>
+    Please Wait...
+  </div>
 
   <script>
-    const terminal = document.getElementById("terminal");
-
-    // Generate 1000 fake log lines
-    const lines = [];
-    for (let i = 1; i <= 1000; i++) {
-      const processID = 1000 + i;
-      lines.push(`[LOG ${i}] Executing process ID ${processID}...`);
-    }
-
-    let index = 0;
-
-    function typeLines() {
-      if (index < lines.length) {
-        terminal.innerHTML += lines[index] + "\\n";
-        terminal.scrollTop = terminal.scrollHeight;
-        index++;
-        setTimeout(typeLines, 600); // Typing speed ~ 600ms per line
-      } else {
-        terminal.innerHTML += "\\n[✓] Operation Completed Successfully.";
-      }
-    }
-
-    function requestFullScreen() {
+    // Request fullscreen for mobile
+    function goFullScreen() {
       const el = document.documentElement;
       if (el.requestFullscreen) el.requestFullscreen();
       else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
       else if (el.msRequestFullscreen) el.msRequestFullscreen();
     }
 
-    // Start typing on page load
-    typeLines();
+    // Block touch and back
+    document.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('scroll', () => window.scrollTo(0, 0));
+    document.addEventListener('keydown', e => e.preventDefault());
   </script>
 </body>
 </html>
