@@ -1,33 +1,37 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Breaking News</title>
+  <meta charset="UTF-8">
+  <title>System Crash</title>
   <style>
-    body {
+    html, body {
       margin: 0;
-      background-color: white;
-    }
-    .blackout {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
+      padding: 0;
       background: black;
-      z-index: 9999;
+      color: lime;
+      font-family: monospace;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    h1 {
+      font-size: 2rem;
+      animation: blink 1s step-start infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
     }
   </style>
 </head>
 <body>
+  <h1>System Failure... Please Wait</h1>
 
-<div class="blackout" id="prankScreen"></div>
-
-<script>
-  setTimeout(() => {
-    document.getElementById('prankScreen').style.display = 'none';
-    alert("Aapka device hack hogaya tha... Just kidding 😄");
-  }, 4000); // 4 seconds blackout
-</script>
-
+  <script>
+    // Disable right-click and keys
+    document.addEventListener("contextmenu", e => e.preventDefault());
+    document.addEventListener("keydown", e => e.preventDefault());
+  </script>
 </body>
 </html>
